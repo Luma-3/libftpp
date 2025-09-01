@@ -1,77 +1,51 @@
----
+# .clang-format
+BasedOnStyle: LLVM
+IndentWidth: 4               # indentation standard
+TabWidth: 4
+UseTab: Never                # espaces > tabs (plus fréquent en pro)
+
+# Alignements
 AlignAfterOpenBracket: Align
-AlignArrayOfStructures: Left
-AlignConsecutiveDeclarations: Consecutive
-AlignConsecutiveMacros: Consecutive
-AlignEscapedNewlines: Left
-AlignOperands: AlignAfterOperator
+AlignConsecutiveAssignments: true
+AlignConsecutiveDeclarations: true
+AlignConsecutiveMacros: true
+AlignOperands: true
 AlignTrailingComments: true
-AllowShortBlocksOnASingleLine: Empty
-AllowShortCaseLabelsOnASingleLine: false
-AllowShortEnumsOnASingleLine: false
-AllowShortFunctionsOnASingleLine: Inline
-AllowShortIfStatementsOnASingleLine: WithoutElse
-AllowShortLoopsOnASingleLine: false
-BinPackArguments: true
-BinPackParameters: true
-BraceWrapping:
-  AfterClass: true
-  AfterControlStatement: false
-  AfterEnum: false
-  AfterFunction: true
-  AfterNamespace: false
-  AfterObjCDeclaration: false
-  AfterStruct: false
-  AfterUnion: false
-  AfterExternBlock: false
-  BeforeCatch: false
-  BeforeElse: true
-  IndentBraces: false
-BreakBeforeBinaryOperators: None
-BreakBeforeBraces: Custom
-BreakBeforeTernaryOperators: true
-BreakConstructorInitializers: AfterColon
-BreakInheritanceList: AfterColon
-ColumnLimit: 100
-CompactNamespaces: false
-ContinuationIndentWidth: 4
-ConstructorInitializerAllOnOneLineOrOnePerLine: false
-DerivePointerAlignment: false
-EmptyLineBeforeAccessModifier: Always
+
+# Espacements
+SpaceBeforeParens: ControlStatements   # if (), while (), mais pas f ()
+SpacesInParentheses: false
+SpacesInSquareBrackets: false
+SpacesInAngles: false                  # pas de "vector< int >"
+SpaceBeforeAssignmentOperators: true
+
+# Braces
+BreakBeforeBraces: Allman              # chaque { sur une nouvelle ligne
+AllowShortFunctionsOnASingleLine: Empty
+
+# Templates & lambdas
+BinPackArguments: false
+BinPackParameters: false
+Cpp11BracedListStyle: true
+IndentWrappedFunctionNames: true
+AlwaysBreakTemplateDeclarations: Yes   # force les templates multiline lisibles
+
+# Imports & includes
+SortIncludes: true
 IncludeBlocks: Regroup
 IncludeCategories:
-  - Regex: '^"(llvm|llvm-c|clang|clang-c)/'
-    Priority: 2
-    SortPriority: 0
-    CaseSensitive: false
-  - Regex: '^(<|"(gtest|isl|json)/)'
-    Priority: 3
-    SortPriority: 1
-    CaseSensitive: false
-  - Regex: ".*"
+  - Regex: '^<.*\.h>'
     Priority: 1
-    SortPriority: 2
-    CaseSensitive: false
-IncludeIsMainRegex: "(Test)?$"
-IndentCaseLabels: true
-IndentPPDirectives: AfterHash
-IndentWidth: 4
-IndentWrappedFunctionNames: false
-NamespaceIndentation: None
-PPIndentWidth: 2
-PackConstructorInitializers: CurrentLine
-PointerAlignment: Right
-QualifierAlignment: Left
-SortIncludes: CaseInsensitive
-SpaceAfterCStyleCast: false
-SpaceAfterTemplateKeyword: true
-SpaceBeforeAssignmentOperators: true
-SpaceBeforeParens: ControlStatements
-SpaceInEmptyParentheses: false
-SpacesBeforeTrailingComments: 1
-SpacesInAngles: true
-SpacesInCStyleCastParentheses: false
-SpacesInContainerLiterals: false
-IsertFinalNewline: true
-TabWidth: 4
-UseTab: Always
+  - Regex: '^<.*>'
+    Priority: 2
+  - Regex: '.*'
+    Priority: 3
+
+# Nommage (optionnel mais courant)
+DerivePointerAlignment: false
+PointerAlignment: Left                 # int* ptr, pas int *ptr
+
+# Autres
+ColumnLimit: 100                       # wrap auto au-delà de 100 colonnes
+AccessModifierOffset: -4               # alignement des public:/private:
+KeepEmptyLinesAtTheStartOfBlocks: true

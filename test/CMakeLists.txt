@@ -14,11 +14,11 @@ set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
 add_executable(libftpp_test
-  main.cc
+  pool_test.cc
 )
 
 target_include_directories(libftpp_test PRIVATE 
-  ../include
+  ../inc
 )
 
 target_link_libraries(libftpp_test PRIVATE

@@ -1,7 +1,8 @@
 NAME = libftpp.a
 
 CXX = c++
-CXXFLAGS = -std=c++11 -Wall -Wextra -Werror -I.
+CXXFLAGS = -std=c++11 -Wall -Wextra -Werror -I$(INCLUDE_DIR)
+INCLUDE_DIR = inc/
 
 ifdef DEBUG
 		CXXFLAGS += -g3 -O0 -DDEBUG
