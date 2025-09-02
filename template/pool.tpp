@@ -9,6 +9,8 @@
 template <typename TType>
 void Pool<TType>::releaseSlot(TType* ptr, size_t index)
 {
+    if (index >= _capacity)
+        return;
     _useSlot[index] = false;
     _freeSlot.push(index);
 }
@@ -25,32 +27,54 @@ Pool<TType>::Pool(const size_t& numberOfObjectStored) : _capacity(numberOfObject
     }
 }
 
+/**
+ * @breif Resize the pool to hold more or less objects.
+ * @Note: Resizing to a smaller size will destroy objects that do not fit in the new size.
+ * @warning: Resizing to a smaller size will invalidate all existing Object instances.
+ * Use a Object outside of the pool after a resize will lead to undefined behavior.
+ * @param %numberOfObjectStored New size of the pool.
+ */
+
 template <typename TType>
 void Pool<TType>::resize(const size_t& numberOfObjectStored)
 {
-    if (_capacity >= numberOfObjectStored)
-        throw std::bad_array_new_length();
 
     std::unique_ptr<std::byte[]> newRaw =
         std::make_unique<std::byte[]>(sizeof(TType) * numberOfObjectStored);
 
     for (size_t i = 0; i < _capacity; ++i)
     {
-        std::byte* oldSlot = &_raw[i * sizeof(TType)];
-        TType*     oldObj  = reinterpret_cast<TType*>(oldSlot);
-
         if (_useSlot[i] == true)
         {
+            std::byte* oldSlot = &_raw[i * sizeof(TType)];
+            TType*     oldObj  = reinterpret_cast<TType*>(oldSlot);
+
             void* newSlot = &newRaw[i * sizeof(TType)];
             new (newSlot) TType(std::move(*oldObj));
 
             oldObj->~TType();
         }
     }
-    _useSlot.resize(numberOfObjectStored, false);
-    for (size_t i = _capacity; i < numberOfObjectStored; ++i)
+    for (size_t i = numberOfObjectStored; i < _capacity; ++i)
     {
-        _freeSlot.push(numberOfObjectStored + _capacity - 1 - i);
+        if (_useSlot[i] == true)
+        {
+            std::byte* oldSlot = &_raw[i * sizeof(TType)];
+            TType*     oldObj  = reinterpret_cast<TType*>(oldSlot);
+            oldObj->~TType();
+            releaseSlot(oldObj, i);
+        }
+    }
+    _useSlot.resize(numberOfObjectStored, false);
+    while (!_freeSlot.empty())
+        _freeSlot.pop();
+    for (size_t i = 0; i < numberOfObjectStored; ++i)
+    {
+        int slot = numberOfObjectStored - 1 - i;
+        if (_useSlot[slot] == false)
+        {
+            _freeSlot.push(slot);
+        }
     }
     _raw      = std::move(newRaw);
     _capacity = numberOfObjectStored;

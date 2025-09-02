@@ -15,6 +15,7 @@ FetchContent_MakeAvailable(googletest)
 
 add_executable(libftpp_test
   pool_test.cc
+  data_buffer_test.cc
 )
 
 target_include_directories(libftpp_test PRIVATE 
@@ -25,6 +26,8 @@ target_link_libraries(libftpp_test PRIVATE
   gtest_main
   ${CMAKE_SOURCE_DIR}/../libftpp.a
 )
+
+enable_testing()
 
 include(GoogleTest)
 gtest_discover_tests(libftpp_test)

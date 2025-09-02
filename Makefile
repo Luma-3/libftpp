@@ -1,8 +1,8 @@
 NAME = libftpp.a
+TEST = test/build/libftpp_test
 
 CXX = c++
-CXXFLAGS = -std=c++11 -Wall -Wextra -Werror -I$(INCLUDE_DIR)
-INCLUDE_DIR = inc/
+CXXFLAGS = -std=c++11 -Wall -Wextra -Werror -Iinc -Itemplate
 
 ifdef DEBUG
 		CXXFLAGS += -g3 -O0 -DDEBUG
@@ -11,7 +11,8 @@ else
 endif
 
 SRCS_DIR = src/
-SRCS = main.cpp
+SRCS =		\
+		data_buffer.cpp
 
 OBJS_DIR = obj/
 OBJS = $(SRCS:%.cpp=$(OBJS_DIR)%.o)
@@ -37,12 +38,29 @@ re: fclean all
 debug:
 	make -C . DEBUG=1 -B
 
-test: all
+# INIT PART #
+
+init: test/build/Makefile
+		bear -- make -B -C.
+		jq -s 'add' compile_commands.json test/build/compile_commands.json > compile_commands_tmp.json
+		mv compile_commands_tmp.json compile_commands.json
+		
+
+# TEST PART #
+
+CMAKE_SRCS := $(wildcard test/*.cc test/*.hh)
+
+
+test/build/Makefile: $(CMAKE_SRCS) $(NAME)
 		mkdir -p test/build
 		cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -S test -B test/build
-		ln -f test/build/compile_commands.json .
+
+
+test: test/build/Makefile
 		make -C test/build
-		./test/build/libftpp_test
+
+run-test: test
+		cd test/build && ctest --output-on-failure
 
 
 .PHONY: all clean fclean re
