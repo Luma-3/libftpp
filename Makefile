@@ -2,7 +2,7 @@ NAME = libftpp.a
 TEST = test/build/libftpp_test
 
 CXX = c++
-CXXFLAGS = -std=c++11 -Wall -Wextra -Werror -Iinc -Itemplate
+CXXFLAGS = -std=c++17 -Wall -Wextra -Werror -I.
 
 ifdef DEBUG
 		CXXFLAGS += -g3 -O0 -DDEBUG
@@ -12,7 +12,8 @@ endif
 
 SRCS_DIR = src/
 SRCS =		\
-		data_buffer.cpp
+		data_structures/data_buffer.cpp	\
+		design_paternes/memento.cpp
 
 OBJS_DIR = obj/
 OBJS = $(SRCS:%.cpp=$(OBJS_DIR)%.o)
@@ -23,7 +24,7 @@ $(NAME): $(OBJS)
 		ar rcs $(NAME) $(OBJS)
 
 $(OBJS_DIR)%.o: $(SRCS_DIR)%.cpp
-		mkdir -p $(OBJS_DIR)
+		mkdir -p $(dir $@)
 		$(CXX) $(CXXFLAGS) -c $< -o $@
 
 clean:

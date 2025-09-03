@@ -16,10 +16,15 @@ FetchContent_MakeAvailable(googletest)
 add_executable(libftpp_test
   pool_test.cc
   data_buffer_test.cc
+  memento_test.cc
+  observer_test.cc
+  singleton_test.cc
+  state_machine_test.cc
 )
 
 target_include_directories(libftpp_test PRIVATE 
-  ../inc
+  ../src/data_structures/
+  ../src/design_paternes/
 )
 
 target_link_libraries(libftpp_test PRIVATE

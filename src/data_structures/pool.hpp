@@ -48,6 +48,6 @@ public:
     void resize(const size_t& numberOfObjectStored);
 };
 
-#include "../template/object.tpp"
-#include "../template/pool.tpp"
+#include "object.tpp"
+#include "pool.tpp"
 #endif // _POOL_HPP

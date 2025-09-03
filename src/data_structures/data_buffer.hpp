@@ -34,6 +34,6 @@ public:
     void clear();
 };
 
-#include "../template/data_buffer.tpp"
+#include "data_buffer.tpp"
 
 #endif // !_DATA_BUFFER_HPP
