@@ -18,6 +18,7 @@ void ThreadSafeIOStream::setPrefix(const std::string& prefix)
 
 ThreadSafeIOStream& ThreadSafeIOStream::operator<<(std::ostream& (*manip)(std::ostream&))
 {
+
     if (manip == static_cast<std::ostream& (*)(std::ostream&)>(std::endl))
     {
         _buffer << '\n';
@@ -35,12 +36,15 @@ void ThreadSafeIOStream::flush()
     auto temp = _buffer.str();
     _buffer.str("");
     _buffer.clear();
+    _atEndLine = true;
 
     if (temp.empty())
+    {
         return;
+    }
 
     std::lock_guard<std::mutex> lock(_global_io_mutex);
-    _out << _prefix << temp;
+    _out << temp;
     _out.flush();
 }
 

@@ -143,19 +143,18 @@ TEST(ThreadSafeIOStreamTest, FlushBehavior)
     EXPECT_EQ(output2, "After flush\n");
 }
 
-TEST(ThreadSafeIOStreamTest, UltimateMultithreadTest)
+TEST(ThreadSafeIOStreamTest, MultithreadTestRegex)
 {
     const int         num_threads         = 5;
     const int         messages_per_thread = 10;
     const std::string prefix              = "[ThreadSafe] ";
 
-    ThreadSafeIO.setPrefix(prefix);
-
     // Capture stdout avant de lancer les threads
-    // testing::internal::CaptureStdout();
+    testing::internal::CaptureStdout();
 
     auto thread_func = [&](int thread_id)
     {
+        ThreadSafeIO.setPrefix(prefix);
         for (int i = 0; i < messages_per_thread; ++i)
         {
             ThreadSafeIO << "Thread " << thread_id << " message " << i << std::endl;

@@ -1,6 +1,7 @@
 #ifndef _THREAD_SAFE_IOSTREAM_HPP
 #define _THREAD_SAFE_IOSTREAM_HPP
 
+#include <cstddef>
 #include <iostream>
 #include <istream>
 #include <mutex>
@@ -28,6 +29,30 @@ public:
     ThreadSafeIOStream& operator<<(const T& value)
     {
         std::ostringstream ss;
+        ss << value;
+        std::string tmp = ss.str();
+
+        size_t start = 0;
+        while (start < tmp.size())
+        {
+            if (_atEndLine)
+            {
+                _buffer << _prefix;
+                _atEndLine = false;
+            }
+
+            size_t pos = tmp.find('\n', start);
+            if (pos == std::string::npos)
+            {
+                _buffer << std::string(tmp.begin() + start, tmp.end());
+                break;
+            }
+            std::string line(tmp.begin() + start, tmp.begin() + pos + 1);
+            _buffer << line;
+            _atEndLine = true;
+            start      = pos + 1;
+        }
+
         return *this;
     }
 
