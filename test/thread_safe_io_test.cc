@@ -188,3 +188,34 @@ TEST(ThreadSafeIOStreamTest, MultithreadTestRegex)
         EXPECT_TRUE(std::regex_match(line, line_pattern));
     }
 }
+
+TEST(ThreadSafeIOStreamTest, PromptTest)
+{
+    // Prépare l'entrée simulée
+    std::istringstream simulated_input("42\n3.14\ntest_string\n");
+    ThreadSafeIOStream test_io(std::cout, simulated_input);
+    test_io.setPrefix("[PromptTest] ");
+
+    int         int_value;
+    double      double_value;
+    std::string string_value;
+
+    // Capture stdout avant d'appeler prompt
+    testing::internal::CaptureStdout();
+
+    test_io.prompt("Enter an integer: ", int_value);
+    test_io.prompt("Enter a double: ", double_value);
+    test_io.prompt("Enter a string: ", string_value);
+
+    std::string output = testing::internal::GetCapturedStdout();
+
+    // Vérifie que les valeurs ont été correctement lues
+    EXPECT_EQ(int_value, 42);
+    EXPECT_DOUBLE_EQ(double_value, 3.14);
+    EXPECT_EQ(string_value, "test_string");
+
+    // Vérifie que les prompts ont été affichés avec le préfixe correct
+    std::string expected_output =
+        "[PromptTest] Enter an integer: [PromptTest] Enter a double: [PromptTest] Enter a string: ";
+    EXPECT_EQ(output, expected_output);
+}
