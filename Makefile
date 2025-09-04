@@ -12,8 +12,9 @@ endif
 
 SRCS_DIR = src/
 SRCS =		\
-		data_structures/data_buffer.cpp	\
-		design_paternes/memento.cpp
+		data_structures/data_buffer.cpp		\
+		design_paternes/memento.cpp			\
+		IOStream/thread_safe_iostream.cpp
 
 OBJS_DIR = obj/
 OBJS = $(SRCS:%.cpp=$(OBJS_DIR)%.o)

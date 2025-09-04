@@ -19,10 +19,12 @@ private:
     std::map<std::pair<TState, TState>, std::function<void()>> _transition;
 
 public:
-    StateMachine() : _current(0) {};
-
     void addState(const TState& state)
     {
+        if (_states.empty())
+        {
+            _current = state;
+        }
         _states.insert(state);
     }
 
@@ -38,8 +40,7 @@ public:
         auto tr = std::make_pair(startState, finalState);
         if (_transition.find(tr) != _transition.end())
         {
-            throw std::runtime_error("Transition Already Exists " + std::to_string(startState) +
-                                     " to " + std::to_string(finalState));
+            throw std::runtime_error("Transition Already Exists");
         }
         _transition[tr] = lambda;
     }

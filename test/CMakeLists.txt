@@ -20,11 +20,13 @@ add_executable(libftpp_test
   observer_test.cc
   singleton_test.cc
   state_machine_test.cc
+  thread_safe_io_test.cc
 )
 
 target_include_directories(libftpp_test PRIVATE 
   ../src/data_structures/
   ../src/design_paternes/
+  ../src/IOStream/
 )
 
 target_link_libraries(libftpp_test PRIVATE

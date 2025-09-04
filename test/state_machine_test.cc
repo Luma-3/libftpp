@@ -52,3 +52,50 @@ TEST_F(StateMachineTest, InvalidStateAction)
     fsm_invalid.addState(0);
     EXPECT_THROW(fsm_invalid.addAction(1, []() {}), std::runtime_error);
 }
+
+TEST(StateMachineTestInit, DoubleAddState)
+{
+    StateMachine<std::string> fsm;
+    fsm.addState("A");
+    EXPECT_NO_THROW(fsm.addState("A"));
+}
+
+TEST(StateMachineTestInit, AddActionToNonExistentState)
+{
+    StateMachine<std::string> fsm;
+    EXPECT_THROW(fsm.addAction("A", []() {}), std::runtime_error);
+}
+
+TEST(StateMachineTestInit, AddTransitionToNonExistentState)
+{
+    StateMachine<std::string> fsm;
+    fsm.addState("A");
+    EXPECT_THROW(fsm.addTransition("A", "B", []() {}), std::runtime_error);
+    EXPECT_THROW(fsm.addTransition("B", "A", []() {}), std::runtime_error);
+}
+
+TEST(StateMachineTestInit, TransitionWithoutAction)
+{
+    StateMachine<std::string> fsm;
+    fsm.addState("A");
+    fsm.addState("B");
+    EXPECT_NO_THROW(fsm.addTransition("A", "B", nullptr));
+    EXPECT_NO_THROW(fsm.addTransition("B", "A", nullptr));
+}
+
+TEST(StateMachineTestInit, AddDoubleTransition)
+{
+    StateMachine<std::string> fsm;
+    fsm.addState("A");
+    fsm.addState("B");
+    fsm.addTransition("A", "B", []() {});
+    EXPECT_THROW(fsm.addTransition("A", "B", []() {}), std::runtime_error);
+}
+
+TEST(StateMachineTestInit, AddDoubleAction)
+{
+    StateMachine<std::string> fsm;
+    fsm.addState("A");
+    fsm.addAction("A", []() {});
+    EXPECT_THROW(fsm.addAction("A", []() {}), std::runtime_error);
+}
