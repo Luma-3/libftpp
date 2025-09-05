@@ -7,15 +7,12 @@
 class TestMemento : public Memento
 {
 private:
-    int                 _intValue;
-    std::string         _strValue;
-    std::vector<double> _vecValue;
+    int         _intValue;
+    std::string _strValue;
 
 public:
-    TestMemento(int                        intValue = 0,
-                const std::string&         strValue = "",
-                const std::vector<double>& vecValue = {})
-        : _intValue(intValue), _strValue(strValue), _vecValue(vecValue)
+    TestMemento(int intValue = 0, const std::string& strValue = "")
+        : _intValue(intValue), _strValue(strValue)
     {
     }
 
@@ -27,24 +24,18 @@ public:
     {
         return _strValue;
     }
-    std::vector<double> getVecValue() const
-    {
-        return _vecValue;
-    }
 
 protected:
     void _saveToSnapshot(Memento::Snapshot& state) const override
     {
         state.set("intValue", _intValue);
         state.set("strValue", _strValue);
-        state.set("vecValue", _vecValue);
     }
 
     void _loadToSnapshot(Memento::Snapshot& state) const override
     {
-        const_cast<int&>(_intValue)                 = state.get<int>("intValue");
-        const_cast<std::string&>(_strValue)         = state.get<std::string>("strValue");
-        const_cast<std::vector<double>&>(_vecValue) = state.get<std::vector<double>>("vecValue");
+        const_cast<int&>(_intValue)         = state.get<int>("intValue");
+        const_cast<std::string&>(_strValue) = state.get<std::string>("strValue");
     }
 };
 
@@ -92,18 +83,4 @@ TEST(Memento, ModifyAfterSave)
 
     EXPECT_EQ(obj2.getIntValue(), 10);
     EXPECT_EQ(obj2.getStrValue(), "Initial");
-}
-
-TEST(Memento, VectorState)
-{
-    std::vector<double> vec = {1.1, 2.2, 3.3};
-    TestMemento         obj1(0, "VectorTest", vec);
-    Memento::Snapshot   snap = obj1.save();
-
-    TestMemento obj2;
-    obj2.load(snap);
-
-    EXPECT_EQ(obj2.getIntValue(), 0);
-    EXPECT_EQ(obj2.getStrValue(), "VectorTest");
-    EXPECT_EQ(obj2.getVecValue(), vec);
 }

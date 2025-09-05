@@ -3,28 +3,21 @@
 
 #include <cstddef>
 #include <iostream>
-#include <istream>
 #include <mutex>
 #include <ostream>
 #include <sstream>
-#include <streambuf>
 #include <string>
 
-class ThreadSafeIOStream : public std::streambuf
+class ThreadSafeIOStream
 {
 private:
-    thread_local static std::string        _prefix;
-    thread_local static std::ostringstream _buffer;
-    bool                                   _atEndLine = true;
+    std::string        _prefix = "";
+    std::ostringstream _buffer;
+    bool               _atEndLine = true;
 
     static std::mutex _global_io_mutex;
 
-    std::ostream& _out;
-    std::istream& _in;
-
 public:
-    ThreadSafeIOStream(std::ostream& out, std::istream& in);
-
     template <typename T>
     ThreadSafeIOStream& operator<<(const T& value)
     {
@@ -62,7 +55,7 @@ public:
     ThreadSafeIOStream& operator>>(T& value)
     {
         std::lock_guard<std::mutex> lock(_global_io_mutex);
-        _in >> value;
+        std::cin >> value;
         return *this;
     }
 
@@ -73,11 +66,11 @@ public:
     {
         {
             std::lock_guard<std::mutex> lock(_global_io_mutex);
-            _out << _prefix << question;
-            _out.flush();
+            std::cout << _prefix << question;
+            std::cout.flush();
         }
         std::lock_guard<std::mutex> lock(_global_io_mutex);
-        _in >> dest;
+        std::cin >> dest;
     }
 
     void flush();

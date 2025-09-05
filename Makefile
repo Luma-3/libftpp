@@ -2,7 +2,7 @@ NAME = libftpp.a
 TEST = test/build/libftpp_test
 
 CXX = c++
-CXXFLAGS = -std=c++17 -Wall -Wextra -Werror -I.
+CXXFLAGS = -std=c++17 -Wall -Wextra -Werror -fPIC -I.
 
 ifdef DEBUG
 		CXXFLAGS += -g3 -O0 -DDEBUG
@@ -62,7 +62,7 @@ test: test/build/Makefile
 		make -C test/build
 
 run-test: test
-		cd test/build && ctest --output-on-failure
+		cd test/build && ./libftpp_test
 
 
 .PHONY: all clean fclean re

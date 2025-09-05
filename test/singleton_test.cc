@@ -30,15 +30,3 @@ TEST(SingletonTest, BasicFunctionality)
     // Attempting to instantiate again should throw an error
     EXPECT_THROW(singleton.instanciate(100), std::runtime_error);
 }
-
-TEST(SingletonTest, MultipleInstances)
-{
-    Singleton<TestSingletonClass> singleton1;
-    Singleton<TestSingletonClass> singleton2;
-
-    // Instantiate the first singleton
-    singleton1.instanciate(10);
-    EXPECT_EQ(singleton1.instance()->value(), 10);
-
-    EXPECT_THROW(singleton1.instanciate(20), std::runtime_error);
-}

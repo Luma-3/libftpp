@@ -1,15 +1,10 @@
 #include "thread_safe_iostream.hpp"
 
-#include <istream>
 #include <mutex>
 #include <ostream>
 #include <sstream>
 
-std::mutex                      ThreadSafeIOStream::_global_io_mutex;
-thread_local std::ostringstream ThreadSafeIOStream::_buffer;
-thread_local std::string        ThreadSafeIOStream::_prefix;
-
-ThreadSafeIOStream::ThreadSafeIOStream(std::ostream& out, std::istream& in) : _out(out), _in(in) {};
+std::mutex ThreadSafeIOStream::_global_io_mutex;
 
 void ThreadSafeIOStream::setPrefix(const std::string& prefix)
 {
@@ -26,7 +21,7 @@ ThreadSafeIOStream& ThreadSafeIOStream::operator<<(std::ostream& (*manip)(std::o
     }
     else
     {
-        _buffer << manip;
+        manip(_buffer);
     }
     return *this;
 }
@@ -44,8 +39,8 @@ void ThreadSafeIOStream::flush()
     }
 
     std::lock_guard<std::mutex> lock(_global_io_mutex);
-    _out << temp;
-    _out.flush();
+    std::cout << temp;
+    std::cout.flush();
 }
 
-thread_local ThreadSafeIOStream ThreadSafeIO(std::cout, std::cin);
+thread_local ThreadSafeIOStream ThreadSafeIO;
