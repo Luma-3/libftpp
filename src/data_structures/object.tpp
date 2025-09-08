@@ -4,36 +4,37 @@
 #include "pool.hpp"
 
 template <typename TType>
-Pool<TType>::Object::Object(Pool* owner, TType* ptr, size_t index)
-    : _ptr(ptr), _owner(owner), _index(index){};
+Pool<TType>::Object::Object(Pool* owner, TType* ptr, size_t index) : _owner(owner), _index(index){};
 
 template <typename TType>
 Pool<TType>::Object::~Object()
 {
-    if (!_ptr)
-        return;
-    _ptr->~TType();
-    _owner->releaseSlot(_ptr, _index);
-    _ptr = nullptr;
+    void*  ptr = &_owner->_raw[_index];
+    TType* obj = reinterpret_cast<TType*>(ptr);
+    obj->~TType();
+    _owner->releaseSlot(obj, _index);
+    _index = 0;
 }
 
 template <typename TType>
-Pool<TType>::Object::Object(Object&& other) noexcept : _ptr(other._ptr), _owner(other._owner)
+Pool<TType>::Object::Object(Object&& other) noexcept : _owner(other._owner), _index(other._index)
 {
-    other._ptr   = nullptr;
+    other._index = 0;
     other._owner = nullptr;
 }
 
 template <typename TType>
 TType* Pool<TType>::Object::operator->()
 {
-    return _ptr;
+    void* ptr = &_owner->_raw[_index];
+    return reinterpret_cast<TType*>(ptr);
 }
 
 template <typename TType>
 TType& Pool<TType>::Object::operator*()
 {
-    return *_ptr;
+    void* ptr = &_owner->_raw[_index];
+    return *reinterpret_cast<TType*>(ptr);
 }
 
 template <typename TType>
@@ -41,10 +42,10 @@ typename Pool<TType>::Object& Pool<TType>::Object::operator=(Object&& other) noe
 {
     if (this != &other)
     {
-        _ptr         = other._ptr;
         _owner       = other._owner;
-        other._ptr   = nullptr;
+        _index       = other._index;
         other._owner = nullptr;
+        other._index = 0;
     }
     return *this;
 }

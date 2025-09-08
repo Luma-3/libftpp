@@ -2,8 +2,6 @@
 
 #include <atomic>
 #include <chrono>
-#include <numeric> // pour std::accumulate
-#include <set>
 #include <thread>
 #include <vector>
 

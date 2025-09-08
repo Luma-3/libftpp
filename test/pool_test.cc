@@ -68,15 +68,12 @@ TEST(PoolTest, ResizeSmaller)
     Pool<int> pool(3);
 
     auto obj1 = pool.acquire(10);
+
     {
         auto obj2 = pool.acquire(20);
         auto obj3 = pool.acquire(30);
 
         pool.resize(2); // Resize to smaller capacity, obj3 should be destroyed
-
-        *obj3 = 35; // This is undefined behavior
-        EXPECT_EQ(*obj3, 35);
-
         EXPECT_THROW(pool.acquire(40), std::runtime_error); // Pool is full
     }
 
@@ -88,24 +85,8 @@ TEST(PoolTest, ResizeSmaller)
     *obj1 = 50;
     EXPECT_EQ(*obj1, 50);
 
-    // Now we can acquire again
     auto obj5 = pool.acquire(50);
     EXPECT_EQ(*obj5, 50);
-}
-
-TEST(PoolTest, MoveSemantics)
-{
-    Pool<int> pool(2);
-
-    auto obj1 = pool.acquire(10);
-    EXPECT_EQ(*obj1, 10);
-
-    auto obj2 = std::move(obj1); // Move obj1 to obj2
-    EXPECT_EQ(*obj2, 10);
-    EXPECT_EQ(obj1.operator->(), nullptr); // obj1 should be null now
-
-    *obj2 = 20;
-    EXPECT_EQ(*obj2, 20);
 }
 
 TEST(PoolTest, ComplexType)

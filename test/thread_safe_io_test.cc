@@ -151,6 +151,7 @@ TEST(ThreadSafeIOStreamTest, LargeOutputMultipleThreadsOptFlush)
 
 TEST(ThreadSafeIOStreamTest, FlushBehavior)
 {
+    ThreadSafeIO.setPrefix("");
     testing::internal::CaptureStdout();
     ThreadSafeIO << "Before flush" << '\n';
     ThreadSafeIO.flush();

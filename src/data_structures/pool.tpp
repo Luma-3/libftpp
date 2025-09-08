@@ -1,6 +1,9 @@
 #ifndef POOL_TPP
 #define POOL_TPP
 
+#include <cassert>
+#include <cstdint>
+#include <iostream>
 #include <stdexcept>
 #include <utility>
 
@@ -18,7 +21,8 @@ void Pool<TType>::releaseSlot(TType* ptr, size_t index)
 template <typename TType>
 Pool<TType>::Pool(const size_t& numberOfObjectStored) : _capacity(numberOfObjectStored)
 {
-    _raw = std::make_unique<std::byte[]>(sizeof(TType) * numberOfObjectStored);
+    _raw = std::make_unique<typename std::aligned_storage<sizeof(TType), alignof(TType)>::type[]>(
+        numberOfObjectStored);
 
     _useSlot.resize(numberOfObjectStored, false);
     for (size_t i = 0; i < numberOfObjectStored; ++i)
@@ -39,31 +43,31 @@ template <typename TType>
 void Pool<TType>::resize(const size_t& numberOfObjectStored)
 {
 
-    std::unique_ptr<std::byte[]> newRaw =
-        std::make_unique<std::byte[]>(sizeof(TType) * numberOfObjectStored);
+    auto newRaw =
+        std::make_unique<typename std::aligned_storage<sizeof(TType), alignof(TType)>::type[]>(
+            numberOfObjectStored);
 
     for (size_t i = 0; i < _capacity; ++i)
     {
-        if (_useSlot[i] == true)
+        if (_useSlot[i] == true && i < numberOfObjectStored)
         {
-            std::byte* oldSlot = &_raw[i * sizeof(TType)];
-            TType*     oldObj  = reinterpret_cast<TType*>(oldSlot);
+            void*  oldSlot = &_raw[i];
+            TType* oldObj  = reinterpret_cast<TType*>(oldSlot);
 
-            void* newSlot = &newRaw[i * sizeof(TType)];
+            void* newSlot = &newRaw[i];
+            auto  addr    = reinterpret_cast<std::uintptr_t>(newSlot);
+            std::cout << "addr=" << addr << " mod align=" << (addr % alignof(TType)) << "\n";
+            assert((addr % alignof(TType)) == 0 && "address is not aligned for TType!");
             new (newSlot) TType(std::move(*oldObj));
 
             oldObj->~TType();
         }
-    }
-    for (size_t i = numberOfObjectStored; i < _capacity; ++i)
-    {
-        if (_useSlot[i] == true)
-        {
-            std::byte* oldSlot = &_raw[i * sizeof(TType)];
-            TType*     oldObj  = reinterpret_cast<TType*>(oldSlot);
-            oldObj->~TType();
-            releaseSlot(oldObj, i);
-        }
+        // else if (_useSlot[i] == true)
+        // {
+        //     void*  oldSlot = &_raw[i];
+        //     TType* oldObj  = reinterpret_cast<TType*>(oldSlot);
+        //     oldObj->~TType();
+        // }
     }
     _useSlot.resize(numberOfObjectStored, false);
     while (!_freeSlot.empty())
@@ -88,7 +92,7 @@ typename Pool<TType>::Object Pool<TType>::acquire(TArgs&&... p_args)
         throw std::runtime_error("Pool exhausted");
     int slotIndex = _freeSlot.top();
 
-    void*  slot = &_raw[slotIndex * sizeof(TType)];
+    void*  slot = &_raw[slotIndex];
     TType* obj  = new (slot) TType(std::forward<TArgs>(p_args)...);
 
     _useSlot[slotIndex] = true;

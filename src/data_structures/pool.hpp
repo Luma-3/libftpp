@@ -4,16 +4,18 @@
 #include <cstddef>
 #include <memory>
 #include <stack>
+#include <type_traits>
 #include <vector>
 
 template <typename TType>
 class Pool
 {
 private:
-    std::unique_ptr<std::byte[]> _raw;
-    size_t                       _capacity = 0;
-    std::stack<size_t>           _freeSlot;
-    std::vector<char>            _useSlot;
+    std::unique_ptr<typename std::aligned_storage<sizeof(TType), alignof(TType)>::type[]> _raw;
+
+    size_t             _capacity = 0;
+    std::stack<size_t> _freeSlot;
+    std::vector<char>  _useSlot;
 
     void releaseSlot(TType* ptr, size_t index);
 
@@ -34,7 +36,6 @@ public:
         Object& operator=(Object&& other) noexcept;
 
     private:
-        TType* _ptr;
         Pool*  _owner;
         size_t _index;
     };
