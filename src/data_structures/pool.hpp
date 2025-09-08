@@ -17,7 +17,7 @@ private:
     std::stack<size_t> _freeSlot;
     std::vector<char>  _useSlot;
 
-    void releaseSlot(TType* ptr, size_t index);
+    void releaseSlot(size_t index);
 
 public:
     // Start Object

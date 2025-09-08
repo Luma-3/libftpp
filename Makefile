@@ -2,7 +2,9 @@ NAME = libftpp.a
 TEST = test/build/libftpp_test
 
 CXX = c++
-CXXFLAGS = -std=c++17 -Wall -Wextra -Werror -fPIC -I.
+CXXFLAGS = -std=c++17 -Wall -Wextra -Werror -fPIC -I$(INCLUDE_DIRS)
+
+INCLUDE_DIRS = -I./src/data_structures -I./src/design_paternes -I./src/IOStream -I./src/thread
 
 ifdef DEBUG
 		CXXFLAGS += -g3 -O0 -DDEBUG
@@ -14,7 +16,9 @@ SRCS_DIR = src/
 SRCS =		\
 		data_structures/data_buffer.cpp		\
 		design_paternes/memento.cpp			\
-		IOStream/thread_safe_iostream.cpp
+		IOStream/thread_safe_iostream.cpp	\
+		thread/thread.cpp					\
+		thread/worker_pool.cpp			
 
 OBJS_DIR = obj/
 OBJS = $(SRCS:%.cpp=$(OBJS_DIR)%.o)

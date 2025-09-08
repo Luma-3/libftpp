@@ -2,15 +2,13 @@
 #define POOL_TPP
 
 #include <cassert>
-#include <cstdint>
-#include <iostream>
 #include <stdexcept>
 #include <utility>
 
 #include "pool.hpp"
 
 template <typename TType>
-void Pool<TType>::releaseSlot(TType* ptr, size_t index)
+void Pool<TType>::releaseSlot(size_t index)
 {
     if (index >= _capacity)
         return;
@@ -55,19 +53,10 @@ void Pool<TType>::resize(const size_t& numberOfObjectStored)
             TType* oldObj  = reinterpret_cast<TType*>(oldSlot);
 
             void* newSlot = &newRaw[i];
-            auto  addr    = reinterpret_cast<std::uintptr_t>(newSlot);
-            std::cout << "addr=" << addr << " mod align=" << (addr % alignof(TType)) << "\n";
-            assert((addr % alignof(TType)) == 0 && "address is not aligned for TType!");
             new (newSlot) TType(std::move(*oldObj));
 
             oldObj->~TType();
         }
-        // else if (_useSlot[i] == true)
-        // {
-        //     void*  oldSlot = &_raw[i];
-        //     TType* oldObj  = reinterpret_cast<TType*>(oldSlot);
-        //     oldObj->~TType();
-        // }
     }
     _useSlot.resize(numberOfObjectStored, false);
     while (!_freeSlot.empty())

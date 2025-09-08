@@ -12,7 +12,7 @@ Pool<TType>::Object::~Object()
     void*  ptr = &_owner->_raw[_index];
     TType* obj = reinterpret_cast<TType*>(ptr);
     obj->~TType();
-    _owner->releaseSlot(obj, _index);
+    _owner->releaseSlot(_index);
     _index = 0;
 }
 

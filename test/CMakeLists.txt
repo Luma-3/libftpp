@@ -13,6 +13,7 @@ FetchContent_Declare(
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
+
 add_executable(libftpp_test
   pool_test.cc
   data_buffer_test.cc
@@ -22,6 +23,8 @@ add_executable(libftpp_test
   state_machine_test.cc
   thread_safe_io_test.cc
   thread_safe_queue_test.cc
+  thread_test.cc
+  worker_pool_test.cc
 )
 
 target_include_directories(libftpp_test PRIVATE 
