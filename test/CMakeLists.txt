@@ -25,6 +25,7 @@ add_executable(libftpp_test
   thread_safe_queue_test.cc
   thread_test.cc
   worker_pool_test.cc
+  persistent_worker_test.cc
 )
 
 target_include_directories(libftpp_test PRIVATE 

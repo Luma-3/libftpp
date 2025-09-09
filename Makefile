@@ -18,7 +18,8 @@ SRCS =		\
 		design_paternes/memento.cpp			\
 		IOStream/thread_safe_iostream.cpp	\
 		thread/thread.cpp					\
-		thread/worker_pool.cpp			
+		thread/worker_pool.cpp				\
+		thread/persistent_worker.cpp
 
 OBJS_DIR = obj/
 OBJS = $(SRCS:%.cpp=$(OBJS_DIR)%.o)
