@@ -2,7 +2,7 @@ NAME = libftpp.a
 TEST = test/build/libftpp_test
 
 CXX = c++
-CXXFLAGS = -std=c++17 -Wall -Wextra -Werror -fPIC -I$(INCLUDE_DIRS)
+CXXFLAGS = -std=c++20 -Wall -Wextra -Werror -fPIC -I$(INCLUDE_DIRS)
 
 INCLUDE_DIRS = -I./src/data_structures -I./src/design_paternes -I./src/IOStream -I./src/thread
 
